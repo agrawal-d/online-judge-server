@@ -16,6 +16,11 @@ app.use(
   express.static(path.join(__dirname, path.sep, "..", path.sep, "public"))
 );
 
+// app.use((_req, res, next) => {
+//   // Enable CORS
+//   res.set("Access-Control-Allow-Origin", "*");
+// });
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 

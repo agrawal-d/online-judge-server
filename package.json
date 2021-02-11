@@ -6,7 +6,8 @@
     "build": "npx tsc",
     "start": "node ./bin/www",
     "pretty": "npx prettier --write .",
-    "dev": "nodemon --exec \"npm run build && npm start\" -e ts, js --ignore dist/"
+    "dev": "nodemon --exec \"npm run build && npm start\" -e ts, js --ignore dist/",
+    "lint": "eslint src"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
