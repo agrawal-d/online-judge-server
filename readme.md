@@ -9,6 +9,7 @@ Heroku URL: https://bits-judge.herokuapp.com/
 - Open this project folder in a terminal
 - Run `npm install`
 - Run `npm i -g eslint`
+- Run `npm i -g nodemon`
 - Install Postman from https://postman.com
 
 ## Run
