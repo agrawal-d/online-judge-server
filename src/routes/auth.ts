@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import { AuthorizedReq } from "../types";
 import { OAuth2Strategy as GoogleStrategy } from "passport-google-oauth";
@@ -9,6 +9,17 @@ import { query } from "express-validator";
 import { validate } from "../validate";
 
 const router = express.Router();
+
+export const authorize = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(403).json({
+      error: {
+        message: "You need to be logged in.",
+      },
+    });
+  }
+  next();
+};
 
 router.get("/google", query("redirect").exists(), validate, (req, res, next) => {
   const auth = passport.authenticate("google", {

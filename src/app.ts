@@ -12,7 +12,6 @@ import authRouter, { configureAuth } from "./routes/auth";
 import passport from "passport";
 import session from "express-session";
 import * as database from "./database";
-import config from "./config";
 
 const app = express();
 app.use(logger("dev"));
@@ -38,7 +37,7 @@ app.use(passport.session());
 
 // Enable CORS
 app.use((req, res, next) => {
-  res.append("Access-Control-Allow-Origin", [config.client]);
+  res.append("Access-Control-Allow-Origin", [req.hostname]);
   res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.append("Access-Control-Allow-Headers", "Content-Type");
   res.append("Access-Control-Allow-Credentials", "true");
