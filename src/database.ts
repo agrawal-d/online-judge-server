@@ -4,7 +4,7 @@ import config from "./config";
 import { Profile } from "passport-google-oauth";
 
 export function init(): void {
-  mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 
   const db = mongoose.connection;
   db.on("error", console.error.bind(console, "Mongoose MongoDB connection error:"));
