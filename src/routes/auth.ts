@@ -37,18 +37,6 @@ router.get("/auth-failed", (req, res) => {
   });
 });
 
-router.get("/user", (req, res) => {
-  if (req.user) {
-    res.json(req.user);
-  } else {
-    res.status(403).json({
-      error: {
-        message: "No user in session.",
-      },
-    });
-  }
-});
-
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/auth-failed" }),
@@ -59,7 +47,7 @@ router.get(
       return res.redirect(redirect);
     }
 
-    return res.status(500).json({
+    return res.status(400).json({
       error: {
         message: "No redirect URL in state",
       },
@@ -73,7 +61,7 @@ export const configureAuth = (): void => {
       {
         clientID: config.GOOGLE_CLIENT_ID,
         clientSecret: config.GOOGLE_CLIENT_SECRET,
-        callbackURL: new URL("auth/google/callback", config.hostname).href,
+        callbackURL: new URL("api/v0/auth/google/callback", config.hostname).href,
       },
       async function (_accessToken, _refreshToken, profile, done) {
         let savedUser = await getUserById(profile.id);

@@ -6,12 +6,26 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import indexRouter from "./routes/index";
-import usersRouter from "./routes/users";
-import authRouter, { configureAuth } from "./routes/auth";
+import apiRouter from "./routes/api";
+import { configureAuth } from "./routes/auth";
 
 import passport from "passport";
 import session from "express-session";
 import * as database from "./database";
+
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+const swaggerSpecification = swaggerJsdoc({
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Backend",
+      version: "1.0.0",
+    },
+  },
+  apis: ["src/routes/**/*.ts"],
+});
 
 const app = express();
 app.use(logger("dev"));
@@ -48,7 +62,7 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, path.sep, "..", path.sep, "public")));
 configureAuth();
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/auth", authRouter);
+app.use("/api/v0", apiRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
 
 module.exports = app;
