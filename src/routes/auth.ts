@@ -12,7 +12,7 @@ const router = express.Router();
 
 export const authorize = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
-    return res.status(403).json({
+    return res.json({
       error: {
         message: "You need to be logged in.",
       },
@@ -30,7 +30,7 @@ router.get("/google", query("redirect").exists(), validate, (req, res, next) => 
 });
 
 router.get("/auth-failed", (req, res) => {
-  res.status(500).json({
+  res.json({
     error: {
       message: "Authentication failed",
     },
@@ -42,18 +42,22 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/auth-failed" }),
   async function (req: AuthorizedReq, res) {
     const redirect = req.query.state;
-    console.log(req.query);
     if (typeof redirect === "string") {
       return res.redirect(redirect);
     }
 
-    return res.status(400).json({
+    return res.json({
       error: {
         message: "No redirect URL in state",
       },
     });
   }
 );
+
+router.get("/logout", (req: AuthorizedReq, res) => {
+  req.session.destroy((err) => console.error(err));
+  return res.json({ logout: true });
+});
 
 export const configureAuth = (): void => {
   passport.use(
