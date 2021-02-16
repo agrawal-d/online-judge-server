@@ -51,7 +51,6 @@ app.use(passport.session());
 
 // Enable CORS
 app.use((req, res, next) => {
-  console.log(req);
   res.append("Access-Control-Allow-Origin", [req.headers.origin]);
   res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.append("Access-Control-Allow-Headers", "Content-Type");
