@@ -24,11 +24,15 @@ export async function createAccount(profile: Profile): Promise<UserClass> {
     throw new Error(`User ${profile.id} already exists`);
   }
 
+  const admin_emails: string[] = JSON.parse(process.env.ADMIN_EMAILS || "[]");
+  const is_admin = profile._json.email in admin_emails;
+
   const newUser = new UserModel({
     name: profile._json.name,
     google_id: profile.id,
     email: profile._json.email,
     picture: profile._json.picture,
+    is_admin,
   });
   const savedUser = await newUser.save();
 
