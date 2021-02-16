@@ -25,7 +25,7 @@ export async function createAccount(profile: Profile): Promise<UserClass> {
   }
 
   const admin_emails: string[] = JSON.parse(process.env.ADMIN_EMAILS || "[]");
-  const is_admin = profile._json.email in admin_emails;
+  const is_admin = admin_emails.indexOf(profile._json.email) > -1;
 
   const newUser = new UserModel({
     name: profile._json.name,

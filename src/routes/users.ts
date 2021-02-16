@@ -5,6 +5,10 @@ import { AuthorizedReq } from "../types";
 const router = express.Router();
 
 router.get("/", query("google-id").exists(), async function (req: AuthorizedReq, res) {
+  if (!req.query.google_id) {
+    return res.json(await UserModel.find());
+  }
+
   const google_id = req.query.google_id as string;
   const user = await UserModel.findOne({ google_id });
 
