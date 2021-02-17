@@ -10,5 +10,8 @@ module.exports = {
     ecmaVersion: 12,
   },
   plugins: ["@typescript-eslint"],
-  rules: {},
+  rules: {
+    "no-empty-function": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+  },
 };
