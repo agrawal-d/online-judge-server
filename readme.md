@@ -21,3 +21,7 @@ Heroku URL: https://bits-judge.herokuapp.com/
 - Install the Heroku CLI.
 - Commit any changes.
 - Run `git push heroku`. ( You'll need access first )
+
+## HackerEarth Demo
+
+http://p.ip.fi/2-A0
