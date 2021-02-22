@@ -13,9 +13,25 @@ const router = express.Router();
 export const authorize = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     return res.json({
-      error: {
-        message: "You need to be logged in.",
-      },
+      errors: [
+        {
+          message: "You need to be logged in.",
+        },
+      ],
+    });
+  }
+  next();
+};
+
+export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
+  const a_req = req as AuthorizedReq;
+  if (!a_req.user || !a_req.user.is_admin) {
+    return res.json({
+      errors: [
+        {
+          message: "You are not authorized.",
+        },
+      ],
     });
   }
   next();

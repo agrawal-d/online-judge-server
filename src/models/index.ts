@@ -32,4 +32,39 @@ export class UserClass {
   he_client_secret: string;
 }
 
+export class SubmissionClass {
+  @prop()
+  he_id: string;
+
+  @prop()
+  assignment_id: string;
+
+  @prop()
+  code: string;
+
+  @prop({ default: false })
+  evaluated: boolean;
+
+  @prop({ default: "C" })
+  language: string;
+
+  @prop({ default: "" })
+  stdin: string;
+
+  @prop({ default: "" })
+  stdout: string;
+
+  @prop({ default: "" })
+  stderr: string;
+
+  @prop()
+  signal: string;
+
+  @prop()
+  errors: unknown;
+
+  @prop()
+  time_used: number;
+}
+
 export const UserModel = getModelForClass(UserClass);

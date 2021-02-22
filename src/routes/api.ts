@@ -1,7 +1,8 @@
 import express from "express";
+import admin from "./admin";
 const router = express.Router();
 
-import authRouter, { authorize } from "./auth";
+import authRouter, { adminOnly, authorize } from "./auth";
 import users from "./users";
 
 router.get("/", function (req, res) {
@@ -9,5 +10,6 @@ router.get("/", function (req, res) {
 });
 router.use("/users", authorize, users);
 router.use("/auth", authRouter);
+router.use("/admin", authorize, adminOnly, admin);
 
 export default router;
