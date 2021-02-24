@@ -6,15 +6,15 @@ router.get("/", function (req, res) {
 });
 
 router.get("/redirect", function (req, res) {
-  res.redirect("/redirect1");
+  res.redirect("http://bits-judge-server.herokuapp.com/redirect1");
 });
 
 router.get("/redirect1", function (req, res) {
-  res.redirect("/final");
+  res.redirect("http://bits-judge-server.herokuapp.com/final");
 });
 
 router.get("/final", function (req, res) {
-  res.end("<h1>OK</h1>");
+  res.send("<p>OK</p>");
 });
 
 export default router;
