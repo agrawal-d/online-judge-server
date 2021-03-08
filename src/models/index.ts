@@ -67,7 +67,7 @@ export class SubmissionClass {
   time_used: number;
 }
 
-export class DashboardClass {
+export class EligibilityClass {
   @prop({ index: true })
   user_id: string;
 
@@ -76,5 +76,5 @@ export class DashboardClass {
 }
 
 export const UserModel = getModelForClass(UserClass);
-export const DashboardModel = getModelForClass(DashboardClass);
-export const SubmissionModel = getModelForClass(SubmissionClass);
+export const EligibilityModel = getModelForClass(EligibilityClass);
+// export const SubmissionModel = getModelForClass(SubmissionClass);
