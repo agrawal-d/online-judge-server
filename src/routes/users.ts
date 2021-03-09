@@ -62,16 +62,18 @@ router.post(
   }
 );
 
-router.get("/getAssignments", async function (req: AuthorizedReq, res) {
+router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   const google_id = req.user.google_id as string;
   const ret = await EligibilityModel.find({ user_id: google_id });
   if (ret) {
     return res.json(ret);
   }
   return res.json({
-    error: {
-      message: "Dashboard not found",
-    },
+    error: [
+      {
+        message: "Dashboard not found",
+      },
+    ],
   });
 });
 
