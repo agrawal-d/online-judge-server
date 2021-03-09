@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { UserModel } from "../models";
+import { UserModel, EligibilityModel } from "../models";
 import { AuthorizedReq } from "../types";
 import { validate } from "../validate";
 const router = express.Router();
@@ -61,5 +61,18 @@ router.post(
     );
   }
 );
+
+router.get("/getAssignments", async function (req: AuthorizedReq, res) {
+  const google_id = req.user.google_id as string;
+  const ret = await EligibilityModel.find({ user_id: google_id });
+  if (ret) {
+    return res.json(ret);
+  }
+  return res.json({
+    error: {
+      message: "Dashboard not found",
+    },
+  });
+});
 
 export default router;
