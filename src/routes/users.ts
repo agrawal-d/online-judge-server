@@ -66,10 +66,8 @@ router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   const google_id = req.user.google_id as string;
   const ret = await EligibilityModel.find({ user_id: google_id });
 
-  if (ret) {
-    const assignments = ret.map((item) => item.assignment_id);
-    return res.json(assignments);
-  }
+  const assignments = ret.map((item) => item.assignment_id);
+  return res.json(assignments);
 });
 
 export default router;
