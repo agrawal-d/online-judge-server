@@ -61,10 +61,17 @@ export class SubmissionClass {
   signal: string;
 
   @prop()
-  errors: unknown;
-
-  @prop()
   time_used: number;
 }
 
+export class EligibilityClass {
+  @prop({ index: true })
+  user_id: string;
+
+  @prop({ index: true })
+  assignment_id: string;
+}
+
 export const UserModel = getModelForClass(UserClass);
+export const EligibilityModel = getModelForClass(EligibilityClass);
+export const SubmissionModel = getModelForClass(SubmissionClass);
