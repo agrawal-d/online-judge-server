@@ -1,5 +1,7 @@
 import express from "express";
+import hackerearth from "../hackerearth";
 import admin from "./admin";
+
 const router = express.Router();
 
 import authRouter, { adminOnly, authorize } from "./auth";
@@ -11,5 +13,6 @@ router.get("/", function (req, res) {
 router.use("/users", authorize, users);
 router.use("/auth", authRouter);
 router.use("/admin", authorize, adminOnly, admin);
+router.use("/he", hackerearth);
 
 export default router;

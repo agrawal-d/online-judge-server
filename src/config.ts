@@ -10,5 +10,6 @@ export default {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   MONGODB_URI: process.env.MONGODB_URI,
   hostname: isDebug ? "http://localhost:3000" : "https://bits-judge-server.herokuapp.com",
+  heroku_url: "https://bits-judge-server.herokuapp.com",
   client: "http://localhost:3001",
 };

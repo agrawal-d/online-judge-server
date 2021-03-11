@@ -10,7 +10,7 @@ export class UserClass {
   @prop()
   email: string;
 
-  @prop({ default: Date.now() })
+  @prop({ default: Date.now })
   created: Date;
 
   @prop()
@@ -33,14 +33,29 @@ export class UserClass {
 }
 
 export class SubmissionClass {
-  @prop()
+  @prop({ index: true })
   he_id: string;
+
+  @prop()
+  status_update_url: string;
 
   @prop()
   assignment_id: string;
 
   @prop()
+  submitter_google_id: string;
+
+  @prop({ default: Date.now })
+  created: Date;
+
+  @prop({ default: "No verdict yet" })
+  verdict: string;
+
+  @prop()
   code: string;
+
+  @prop()
+  testcase_id: string;
 
   @prop({ default: false })
   evaluated: boolean;
@@ -54,14 +69,8 @@ export class SubmissionClass {
   @prop({ default: "" })
   stdout: string;
 
-  @prop({ default: "" })
-  stderr: string;
-
   @prop()
-  signal: string;
-
-  @prop()
-  time_used: number;
+  time_used: string;
 }
 
 export class EligibilityClass {
