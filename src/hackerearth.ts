@@ -13,13 +13,20 @@ const headers = {
 
 const callbackURL = new URL("/api/v0/he/he_callback", config.heroku_url).toString();
 
-export function make_submission(p: {
+export async function make_submission(p: {
   submitter_google_id: string;
   assignment_id: string;
   testcase_id: string;
   code: string;
   input: string;
+  expected_output: string;
 }) {
+  await SubmissionModel.findOneAndDelete({
+    submitter_google_id: p.submitter_google_id,
+    assignment_id: p.assignment_id,
+    testcase_id: p.testcase_id,
+  });
+
   const context = {
     submitter_google_id: p.submitter_google_id,
     testcase_id: p.testcase_id,
@@ -32,6 +39,7 @@ export function make_submission(p: {
     time_limit: 5,
     callback: callbackURL,
     source: p.code,
+    input: p.input,
     context: JSON.stringify(context),
   };
 
@@ -56,17 +64,17 @@ export function make_submission(p: {
       assignment_id: p.assignment_id,
       submitter_google_id: p.submitter_google_id,
       code: p.code,
+      stdin: p.input,
       testcase_id: p.testcase_id,
       evaluated: false,
       language: "C",
-      stdin: p.input,
     });
 
     console.log(sub);
     sub.save();
 
     setTimeout(() => {
-      evaluate_submission(body.he_id, "expected_output");
+      evaluate_submission(body.he_id, p.expected_output);
     }, 10000);
   });
 }
@@ -85,9 +93,8 @@ export async function evaluate_submission(he_id: string, expected_output: string
   }
 
   sub.evaluated = true;
-  sub.stdin = expected_output;
-  sub.stdout = (await axios.get(data.result.run_status.output)).data;
-  const pass = sub.stdout === expected_output;
+  sub.stdout = (await axios.get(data.result.run_status.output)).data.trim();
+  const pass = sub.stdout.trim() === expected_output.trim();
   sub.verdict = pass ? "PASS" : "FAIL";
   sub.time_used = data.result.run_status.time_used;
 
