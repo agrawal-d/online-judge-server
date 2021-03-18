@@ -1,4 +1,4 @@
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass, Severity, modelOptions } from "@typegoose/typegoose";
 
 export class UserClass {
   @prop()
@@ -94,7 +94,7 @@ export class TestCaseClass {
   @prop()
   visible: boolean;
 }
-
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class ProblemClass {
   @prop({ index: true })
   assigment_id: string;
@@ -118,6 +118,7 @@ export class ProblemClass {
   testcases: string[];
 }
 
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class AssignmentClass {
   @prop()
   name: string;

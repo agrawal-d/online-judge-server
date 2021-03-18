@@ -1,21 +1,20 @@
 import express from "express";
-import { make_submission } from "../hackerearth";
+import { make_submission_and_evaluate } from "../hackerearth";
 const router = express.Router();
 
 router.get("/", function (req, res) {
   res.json({ staus: "working" });
 });
 
-router.get("/test", function (req, res) {
-  make_submission({
+router.get("/test", async function (req, res) {
+  make_submission_and_evaluate({
     submitter_google_id: "gid",
     assignment_id: "aid",
     testcase_id: "tid",
-    code: '#include<stdio.h>\nint main(){printf("hello world");}',
+    code: '#include<stdiox.h>\nint main(){printf("hello world");}',
     input: "inp",
     expected_output: "hello world",
   });
-  // evaluate_submission("4f60745c-64d8-441f-860d-a2330407982d", "hello world");
 
   res.end("OK");
 });

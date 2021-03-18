@@ -1,5 +1,8 @@
 import express from "express";
-import { query } from "express-validator";
+import { body, query } from "express-validator";
+import { make_submission_and_evaluate } from "../hackerearth";
+import { sleep } from "../lib";
+import { EligibilityModel, SubmissionModel, TestCaseModel } from "../models";
 import { AuthorizedReq } from "../types";
 import { validate } from "../validate";
 const router = express.Router();
@@ -53,5 +56,42 @@ router.get("/", query("assignmentId").exists(), validate, async function (req: A
     ],
   });
 });
+
+// export function run_testcase(p:{
+//   submitter_google_id:string,
+// })
+
+router.post(
+  "/run-testcase",
+  body("assignment_id").exists(),
+  body("testcase_id").exists(),
+  body("code").exists(),
+  body("problem_id").exists(),
+  validate,
+  async (req: AuthorizedReq, res) => {
+    const user_id = req.user.google_id;
+    const elibility = await EligibilityModel.findOne({ user_id, assignment_id: req.body.assigment_id });
+
+    if (!elibility) {
+      return res.json({ errors: [{ message: "Unauthorized to submit to this assignment" }] });
+    }
+
+    const testcase = await TestCaseModel.findById(req.body.testcase_id);
+
+    make_submission_and_evaluate({
+      submitter_google_id: user_id,
+      assignment_id: req.body.assigment_id,
+      testcase_id: req.body.testcase_id,
+      code: req.body.code,
+      input: testcase.input,
+      expected_output: testcase.output,
+    });
+
+    await sleep(15000);
+
+    const sub = await SubmissionModel.findOne({ testcase_id: testcase.id, submitter_google_id: user_id });
+    return res.json(sub);
+  }
+);
 
 export default router;

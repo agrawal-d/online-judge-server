@@ -1,10 +1,10 @@
 import express from "express";
 import axios from "axios";
-import request from "request";
 import config from "./config";
 const router = express.Router();
 import { SubmissionModel } from "./models";
 import { HE_Request_status } from "./types";
+import { sleep } from "./lib";
 
 const headers = {
   "client-secret": "8f821eabf6e2d2f302dc83921432070b30817121",
@@ -13,7 +13,7 @@ const headers = {
 
 const callbackURL = new URL("/api/v0/he/he_callback", config.heroku_url).toString();
 
-export async function make_submission(p: {
+export async function make_submission_and_evaluate(p: {
   submitter_google_id: string;
   assignment_id: string;
   testcase_id: string;
@@ -33,7 +33,7 @@ export async function make_submission(p: {
     assignment_id: p.assignment_id,
   };
 
-  const data = {
+  const sentData = {
     lang: "C",
     memory_limit: 2463232,
     time_limit: 5,
@@ -43,7 +43,7 @@ export async function make_submission(p: {
     context: JSON.stringify(context),
   };
 
-  const dataString = JSON.stringify(data);
+  const dataString = JSON.stringify(sentData);
 
   const options = {
     url: "https://api.hackerearth.com/v4/partner/code-evaluation/submissions/",
@@ -52,43 +52,40 @@ export async function make_submission(p: {
     body: dataString,
   };
 
-  request(options, (err, _res, data) => {
-    if (err) {
-      return console.error(err);
-    }
-
-    const body: { he_id: string; status_update_url: string } = JSON.parse(data);
-    const sub = new SubmissionModel({
-      he_id: body.he_id,
-      status_update_url: body.status_update_url,
-      assignment_id: p.assignment_id,
-      submitter_google_id: p.submitter_google_id,
-      code: p.code,
-      stdin: p.input,
-      testcase_id: p.testcase_id,
-      evaluated: false,
-      language: "C",
-    });
-
-    console.log(sub);
-    sub.save();
-
-    setTimeout(() => {
-      evaluate_submission(body.he_id, p.expected_output);
-    }, 10000);
+  const res = await axios.post(options.url, options.body, {
+    headers: options.headers,
   });
-}
 
+  const data = res.data;
+  const body: { he_id: string; status_update_url: string } = data;
+
+  const sub = new SubmissionModel({
+    he_id: body.he_id,
+    status_update_url: body.status_update_url,
+    assignment_id: p.assignment_id,
+    submitter_google_id: p.submitter_google_id,
+    code: p.code,
+    stdin: p.input,
+    testcase_id: p.testcase_id,
+    evaluated: false,
+    language: "C",
+  });
+  sub.save();
+  await sleep(6000);
+  const evaluated_sub = await evaluate_submission(body.he_id, p.expected_output);
+  console.log(evaluated_sub);
+  return evaluated_sub;
+}
 export async function evaluate_submission(he_id: string, expected_output: string) {
   console.log("Evaluating", he_id);
   const sub = await SubmissionModel.findOne({ he_id });
   const url = sub.status_update_url;
   const res = await axios.get(url, { headers });
   const data: HE_Request_status = res.data;
-  console.log(data, typeof data);
 
   if (data.result.compile_status !== "OK") {
-    sub.verdict = "Not Compiled";
+    sub.verdict = "Unable to compile";
+    sub.evaluated = true;
     return sub.save();
   }
 
