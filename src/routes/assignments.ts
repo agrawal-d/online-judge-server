@@ -131,4 +131,34 @@ router.post(
   }
 );
 
+router.post(
+  "/add-assignment",
+  body("ass_name").exists(),
+  body("ta_ids").exists(),
+  body("student_ids").exists(),
+  body("start").exists(),
+  body("end").exists(),
+  validate,
+  async (req: AuthorizedReq, res) => {
+    const assign = new AssignmentModel({
+      name: req.body.ass_name,
+      prof_id: req.user.google_id,
+      ta_ids: req.body.ta_ids,
+      student_ids: req.body.student_ids,
+      start: req.body.start,
+      end: req.body.end,
+      problem_ids: [],
+    });
+    const assignment = await assign.save();
+    req.body.student_ids.forEach((id: string) => {
+      const eli = new EligibilityModel({
+        user_id: id,
+        assignment_id: assignment.id,
+      });
+      eli.save();
+    });
+    return res.json(assignment);
+  }
+);
+
 export default router;
