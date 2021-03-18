@@ -81,6 +81,69 @@ export class EligibilityClass {
   assignment_id: string;
 }
 
+export class TestCaseClass {
+  @prop({ index: true })
+  problem_id: string;
+
+  @prop()
+  input: string;
+
+  @prop()
+  output: string;
+
+  @prop()
+  visible: boolean;
+}
+
+export class QuestionClass {
+  @prop({ index: true })
+  assigment_id: string;
+
+  @prop()
+  name: string;
+
+  @prop()
+  time_limit: string;
+
+  @prop()
+  memory_limit: string;
+
+  @prop()
+  problem_statement: string;
+
+  @prop()
+  languages_allowed: string[];
+
+  @prop()
+  testcases: string[];
+}
+
+export class AssignmentClass {
+  @prop()
+  name: string;
+
+  @prop()
+  prof_id: string;
+
+  @prop()
+  ta_ids: string[];
+
+  @prop()
+  student_ids: string[];
+
+  @prop()
+  start: Date;
+
+  @prop()
+  end: Date;
+
+  @prop()
+  question_ids: string[];
+}
+
 export const UserModel = getModelForClass(UserClass);
 export const EligibilityModel = getModelForClass(EligibilityClass);
 export const SubmissionModel = getModelForClass(SubmissionClass);
+export const TestCaseModel = getModelForClass(TestCaseClass);
+export const QuestionModel = getModelForClass(QuestionClass);
+export const AssignmentModel = getModelForClass(AssignmentClass);
