@@ -1,15 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const isDebug = function () {
-  return process.env.NODE_ENV !== "production";
-};
+function isProduction() {
+  return process.env.NODE_ENV === "production";
+}
 
 export default {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   MONGODB_URI: process.env.MONGODB_URI,
-  hostname: isDebug ? "http://localhost:3000" : "https://bits-judge-server.herokuapp.com",
+  hostname: isProduction() ? "https://bits-judge-server.herokuapp.com" : "http://localhost:3000",
   heroku_url: "https://bits-judge-server.herokuapp.com",
-  client: "http://localhost:3001",
+  client: isProduction() ? "https://bits-judge.herokuapp.com" : "http://localhost:3001",
 };
