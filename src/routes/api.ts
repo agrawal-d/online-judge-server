@@ -1,4 +1,5 @@
 import express from "express";
+import config from "../config";
 import hackerearth from "../hackerearth";
 import admin from "./admin";
 
@@ -10,6 +11,11 @@ import users from "./users";
 router.get("/", function (req, res) {
   res.json({ api: "online" });
 });
+
+router.get("/config", function (req, res) {
+  res.json(config);
+});
+
 router.use("/users", authorize, users);
 router.use("/auth", authRouter);
 router.use("/admin", authorize, adminOnly, admin);
