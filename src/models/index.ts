@@ -95,7 +95,7 @@ export class TestCaseClass {
   visible: boolean;
 }
 
-export class QuestionClass {
+export class ProblemClass {
   @prop({ index: true })
   assigment_id: string;
 
@@ -138,12 +138,12 @@ export class AssignmentClass {
   end: Date;
 
   @prop()
-  question_ids: string[];
+  problem_ids: string[];
 }
 
 export const UserModel = getModelForClass(UserClass);
 export const EligibilityModel = getModelForClass(EligibilityClass);
 export const SubmissionModel = getModelForClass(SubmissionClass);
 export const TestCaseModel = getModelForClass(TestCaseClass);
-export const QuestionModel = getModelForClass(QuestionClass);
+export const ProblemModel = getModelForClass(ProblemClass);
 export const AssignmentModel = getModelForClass(AssignmentClass);
