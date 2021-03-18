@@ -70,4 +70,9 @@ router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   return res.json(assignments);
 });
 
+router.get("/tas", async function (req: AuthorizedReq, res) {
+  const users = await UserModel.find({ is_ta: true });
+  return res.json(users);
+});
+
 export default router;
