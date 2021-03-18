@@ -83,10 +83,7 @@ export class EligibilityClass {
 
 export class TestCaseClass {
   @prop({ index: true })
-  id: string;
-
-  @prop({ index: true })
-  question_id: string;
+  problem_id: string;
 
   @prop()
   input: string;
@@ -99,9 +96,6 @@ export class TestCaseClass {
 }
 
 export class QuestionClass {
-  @prop({ index: true })
-  id: string;
-
   @prop({ index: true })
   assigment_id: string;
 
@@ -125,9 +119,6 @@ export class QuestionClass {
 }
 
 export class AssignmentClass {
-  @prop({ index: true })
-  id: string;
-
   @prop()
   name: string;
 
