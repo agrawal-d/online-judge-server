@@ -33,33 +33,43 @@ router.get("/", query("assignmentId").exists(), validate, async function (req: A
     problems: [
       {
         name: "Problem A",
+        id: "1",
         statement: ps1,
         language: "C",
         testcases: [
           {
+            id: "6053a4d4d3a535c76bcce0ad",
             input: "42",
             output: "42",
+          },
+          {
+            id: "6053a4d4d3a535c76bcce0ad",
+            input: "45",
+            output: "45",
           },
         ],
       },
       {
         name: "Problem B",
+        id: "2",
         statement: "<b>Problem Statement II</b>",
         language: "C",
         testcases: [
           {
+            id: "6053a4d4d3a535c76bcce0ad",
             input: "43",
             output: "43",
+          },
+          {
+            id: "6053a4d4d3a535c76bcce0ad",
+            input: "44",
+            output: "44",
           },
         ],
       },
     ],
   });
 });
-
-// export function run_testcase(p:{
-//   submitter_google_id:string,
-// })
 
 router.post(
   "/run-testcase",
@@ -70,15 +80,15 @@ router.post(
   validate,
   async (req: AuthorizedReq, res) => {
     const user_id = req.user.google_id;
-    const elibility = await EligibilityModel.findOne({ user_id, assignment_id: req.body.assigment_id });
+    // const elibility = await EligibilityModel.findOne({ user_id, assignment_id: req.body.assigment_id });
 
-    if (!elibility) {
-      return res.json({ errors: [{ message: "Unauthorized to submit to this assignment" }] });
-    }
+    // if (!elibility) {
+    //   return res.json({ errors: [{ message: "Unauthorized to submit to this assignment" }] });
+    // }
 
     const testcase = await TestCaseModel.findById(req.body.testcase_id);
 
-    make_submission_and_evaluate({
+    const sub = await make_submission_and_evaluate({
       submitter_google_id: user_id,
       assignment_id: req.body.assigment_id,
       testcase_id: req.body.testcase_id,
@@ -87,10 +97,7 @@ router.post(
       expected_output: testcase.output,
     });
 
-    await sleep(15000);
-
-    const sub = await SubmissionModel.findOne({ testcase_id: testcase.id, submitter_google_id: user_id });
-    return res.json(sub);
+    res.json(sub);
   }
 );
 
