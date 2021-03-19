@@ -124,6 +124,15 @@ router.post(
       const eli = new EligibilityModel({
         user_id: id,
         assignment_id: assignment.id,
+        is_ta: false,
+      });
+      eli.save();
+    });
+    req.body.ta_ids.forEach((id: string) => {
+      const eli = new EligibilityModel({
+        user_id: id,
+        assignment_id: assignment.id,
+        is_ta: true,
       });
       eli.save();
     });

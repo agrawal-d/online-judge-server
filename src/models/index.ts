@@ -17,9 +17,6 @@ export class UserClass {
   picture: string;
 
   @prop({ default: false })
-  is_ta: boolean;
-
-  @prop({ default: false })
   is_admin: boolean;
 
   @prop({ default: false })
@@ -79,6 +76,9 @@ export class EligibilityClass {
 
   @prop({ index: true })
   assignment_id: string;
+
+  @prop({ default: false })
+  is_ta: boolean;
 }
 
 export class TestCaseClass {
@@ -94,6 +94,7 @@ export class TestCaseClass {
   @prop()
   visible: boolean;
 }
+
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class ProblemClass {
   @prop({ index: true })
