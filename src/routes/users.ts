@@ -63,17 +63,25 @@ router.post(
 );
 
 router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
-  const google_id = req.user.google_id as string;
-  const temp = await EligibilityModel.find({ user_id: google_id });
+  const google_email = req.user.email as string;
+  const temp = await EligibilityModel.find({ user_id: google_email });
   let assignments: any[] = [];
 
-  temp.forEach(async (element) => {
-    const deets = await AssignmentModel.find({ id: element.assignment_id });
-    const to_ret = deets.map((item) => [item.id, item.name, item.start, item.end, element.is_ta]);
-    assignments.push(to_ret);
+  let pro = new Promise<void>((resolve, reject) => {
+    temp.forEach(async (element, index, array) => {
+      const deets = await AssignmentModel.find({ _id: element.assignment_id });
+      const to_ret = deets.map((item) => [item.id, item.name, item.start, item.end, element.is_ta]);
+      assignments.push(to_ret);
+      if (index === array.length - 1) {
+        resolve();
+      }
+    });
   });
+  pro.then(() => {
+    console.log(assignments);
 
-  return res.json(assignments);
+    return res.json(assignments);
+  });
 });
 
 router.get("/get-prof-assigments", async function (req: AuthorizedReq, res) {
