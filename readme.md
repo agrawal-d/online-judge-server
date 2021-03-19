@@ -16,6 +16,12 @@ Heroku URL: https://bits-judge.herokuapp.com/
 
 - In a terminal, execure `npm run dev` to launch a hot-reloading server.
 
+## Testing endpoints
+
+- To log in in Postman, set a Header with key `dev-user-email` and value as the `email` of the user you want to be logged in as.
+
+![Postman](public/dev-login.png)
+
 ## Deployment
 
 - Install the Heroku CLI.

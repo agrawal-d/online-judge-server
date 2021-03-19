@@ -15,6 +15,7 @@ import * as database from "./database";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import { devLogin } from "./lib";
 
 const swaggerSpecification = swaggerJsdoc({
   swaggerDefinition: {
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, path.sep, "..", path.sep, "public")));
 configureAuth();
+app.use(devLogin);
 app.use("/", indexRouter);
 app.use("/api/v0", apiRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecification));

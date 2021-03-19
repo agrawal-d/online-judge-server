@@ -6,7 +6,11 @@ router.get("/", function (req, res) {
   res.json({ staus: "working" });
 });
 
-router.get("/test", async function (req, res) {
+router.get("/test-dev-login", function (req, res) {
+  res.json(req.user);
+});
+
+router.get("/test-sub", async function (req, res) {
   make_submission_and_evaluate({
     submitter_google_id: "gid",
     assignment_id: "aid",
