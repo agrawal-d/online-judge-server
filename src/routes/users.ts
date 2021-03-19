@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { UserModel, EligibilityModel } from "../models";
+import { UserModel, EligibilityModel, AssignmentModel } from "../models";
 import { AuthorizedReq } from "../types";
 import { validate } from "../validate";
 const router = express.Router();
@@ -64,10 +64,22 @@ router.post(
 
 router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   const google_id = req.user.google_id as string;
-  const ret = await EligibilityModel.find({ user_id: google_id });
+  const temp = await EligibilityModel.find({ user_id: google_id });
+  let assignments: any[] = [];
 
-  const assignments = ret.map((item) => item.assignment_id);
+  temp.forEach(async (element) => {
+    const deets = await AssignmentModel.find({ id: element.assignment_id });
+    const to_ret = deets.map((item) => [item.id, item.name, item.start, item.end, element.is_ta]);
+    assignments.push(to_ret);
+  });
+
   return res.json(assignments);
+});
+
+router.get("/get-prof-assigments", async function (req: AuthorizedReq, res) {
+  const google_id = req.user.google_id as string;
+  const ass_of_profs = await AssignmentModel.find({ prof_id: google_id });
+  return res.json(ass_of_profs);
 });
 
 export default router;
