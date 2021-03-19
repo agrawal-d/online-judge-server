@@ -84,7 +84,7 @@ router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   });
 });
 
-router.get("/get-prof-assigments", async function (req: AuthorizedReq, res) {
+router.get("/get-prof-assignment", async function (req: AuthorizedReq, res) {
   const google_id = req.user.google_id as string;
   const ass_of_profs = await AssignmentModel.find({ prof_id: google_id });
   return res.json(ass_of_profs);
