@@ -121,37 +121,26 @@ router.post(
     });
     const assignment = await assign.save();
 
-    let stu = new Promise<void>((resolve, reject) => {
-      req.body.student_ids.forEach(async (id: string, index: number, array: string | any[]) => {
-        const eli = new EligibilityModel({
-          user_id: id,
-          assignment_id: assignment.id,
-          is_ta: false,
-        });
-        await eli.save();
-        if (index === array.length - 1) {
-          resolve();
-        }
+    for (let index = 0; index < req.body.student_ids.length; index++) {
+      const element = req.body.student_ids[index];
+      const student_elig = new EligibilityModel({
+        user_id: element,
+        assignment_id: assignment.id,
+        is_ta: false,
       });
-      stu.then(() => {
-        let tas = new Promise<void>((resolve, reject) => {
-          req.body.ta_ids.forEach(async (id: string, index: any, array: any) => {
-            const eli = new EligibilityModel({
-              user_id: id,
-              assignment_id: assignment.id,
-              is_ta: true,
-            });
-            await eli.save();
-            if (index === array.length - 1) {
-              resolve();
-            }
-          });
-        });
-        tas.then(() => {
-          return res.json(assignment);
-        });
+      student_elig.save();
+    }
+    for (let index = 0; index < req.body.ta_ids.length; index++) {
+      const element = req.body.ta_ids[index];
+      const ta_elig = new EligibilityModel({
+        user_id: element,
+        assignment_id: assignment.id,
+        is_ta: true,
       });
-    });
+      ta_elig.save();
+    }
+
+    return res.json(assignment);
   }
 );
 
