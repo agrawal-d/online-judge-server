@@ -128,20 +128,20 @@ router.post(
           assignment_id: assignment.id,
           is_ta: false,
         });
-        eli.save();
+        await eli.save();
         if (index === array.length - 1) {
           resolve();
         }
       });
       stu.then(() => {
         let tas = new Promise<void>((resolve, reject) => {
-          req.body.ta_ids.forEach((id: string, index: any, array: any) => {
+          req.body.ta_ids.forEach(async (id: string, index: any, array: any) => {
             const eli = new EligibilityModel({
               user_id: id,
               assignment_id: assignment.id,
               is_ta: true,
             });
-            eli.save();
+            await eli.save();
             if (index === array.length - 1) {
               resolve();
             }
