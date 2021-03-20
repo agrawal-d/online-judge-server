@@ -120,22 +120,26 @@ router.post(
       problem_ids: [],
     });
     const assignment = await assign.save();
-    req.body.student_ids.forEach((id: string) => {
-      const eli = new EligibilityModel({
-        user_id: id,
+
+    for (let index = 0; index < req.body.student_ids.length; index++) {
+      const element = req.body.student_ids[index];
+      const student_elig = new EligibilityModel({
+        user_id: element,
         assignment_id: assignment.id,
         is_ta: false,
       });
-      eli.save();
-    });
-    req.body.ta_ids.forEach((id: string) => {
-      const eli = new EligibilityModel({
-        user_id: id,
+      student_elig.save();
+    }
+    for (let index = 0; index < req.body.ta_ids.length; index++) {
+      const element = req.body.ta_ids[index];
+      const ta_elig = new EligibilityModel({
+        user_id: element,
         assignment_id: assignment.id,
         is_ta: true,
       });
-      eli.save();
-    });
+      ta_elig.save();
+    }
+
     return res.json(assignment);
   }
 );

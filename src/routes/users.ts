@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { UserModel, EligibilityModel } from "../models";
+import { UserModel, EligibilityModel, AssignmentModel } from "../models";
 import { AuthorizedReq } from "../types";
 import { validate } from "../validate";
 const router = express.Router();
@@ -62,12 +62,42 @@ router.post(
   }
 );
 
-router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
-  const google_id = req.user.google_id as string;
-  const ret = await EligibilityModel.find({ user_id: google_id });
+router.get("/get-student-assignments", async function (req: AuthorizedReq, res) {
+  const google_email = req.user.email as string;
+  const eligibileMappings = await EligibilityModel.find({ user_id: google_email, is_ta: false });
+  const assignments = [];
 
-  const assignments = ret.map((item) => item.assignment_id);
+  for (let index = 0; index < eligibileMappings.length; index++) {
+    const element = eligibileMappings[index];
+    const assignment = await AssignmentModel.findById(element.assignment_id);
+    assignments.push(assignment);
+  }
+
   return res.json(assignments);
+});
+
+router.get("/get-ta-assignments", async function (req: AuthorizedReq, res) {
+  const google_email = req.user.email as string;
+  const eligibileMappings = await EligibilityModel.find({ user_id: google_email, is_ta: true });
+  const assignments = [];
+
+  for (let index = 0; index < eligibileMappings.length; index++) {
+    const element = eligibileMappings[index];
+    const assignment = await AssignmentModel.findById(element.assignment_id);
+    assignments.push(assignment);
+  }
+
+  return res.json(assignments);
+});
+
+router.get("/get-instructor-assignments", async function (req: AuthorizedReq, res) {
+  if (req.user.is_instructor === true) {
+    const google_id = req.user.google_id as string;
+    const ass_of_profs = await AssignmentModel.find({ prof_id: google_id });
+    return res.json(ass_of_profs);
+  } else {
+    return res.json({ errors: ["User is not an instructor"] });
+  }
 });
 
 export default router;
