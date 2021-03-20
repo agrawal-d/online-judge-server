@@ -62,9 +62,23 @@ router.post(
   }
 );
 
-router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
+router.get("/get-student-assignments", async function (req: AuthorizedReq, res) {
   const google_email = req.user.email as string;
-  const eligibileMappings = await EligibilityModel.find({ user_id: google_email });
+  const eligibileMappings = await EligibilityModel.find({ user_id: google_email, is_ta: false });
+  const assignments = [];
+
+  for (let index = 0; index < eligibileMappings.length; index++) {
+    const element = eligibileMappings[index];
+    const assignment = await AssignmentModel.findById(element.assignment_id);
+    assignments.push(assignment);
+  }
+
+  return res.json(assignments);
+});
+
+router.get("/get-ta-assignments", async function (req: AuthorizedReq, res) {
+  const google_email = req.user.email as string;
+  const eligibileMappings = await EligibilityModel.find({ user_id: google_email, is_ta: true });
   const assignments = [];
 
   for (let index = 0; index < eligibileMappings.length; index++) {
