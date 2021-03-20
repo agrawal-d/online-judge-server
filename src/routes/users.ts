@@ -64,23 +64,26 @@ router.post(
 
 router.get("/get-my-assignments", async function (req: AuthorizedReq, res) {
   const google_email = req.user.email as string;
-  const users = await EligibilityModel.find({ user_id: google_email });
-  let assignments: any[] = [];
+  const eligibileMappings = await EligibilityModel.find({ user_id: google_email });
+  const assignments = [];
 
-  for (let index = 0; index < users.length; index++) {
-    const element = users[index];
-    const assdetails = await AssignmentModel.find({ _id: element.assignment_id });
-    const required = assdetails.map((item) => [item.id, item.name, item.start, item.end, element.is_ta]);
-    assignments.push(required);
+  for (let index = 0; index < eligibileMappings.length; index++) {
+    const element = eligibileMappings[index];
+    const assignment = await AssignmentModel.findById(element.assignment_id);
+    assignments.push(assignment);
   }
 
   return res.json(assignments);
 });
 
-router.get("/get-prof-assignment", async function (req: AuthorizedReq, res) {
-  const google_id = req.user.google_id as string;
-  const ass_of_profs = await AssignmentModel.find({ prof_id: google_id });
-  return res.json(ass_of_profs);
+router.get("/get-instructor-assignments", async function (req: AuthorizedReq, res) {
+  if (req.user.is_instructor === true) {
+    const google_id = req.user.google_id as string;
+    const ass_of_profs = await AssignmentModel.find({ prof_id: google_id });
+    return res.json(ass_of_profs);
+  } else {
+    return res.json({ errors: ["User is not an instructor"] });
+  }
 });
 
 export default router;
