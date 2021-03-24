@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { UserClass } from "./models";
+import { AssignmentClass, SubmissionClass, UserClass } from "./models";
 
 export interface AuthorizedReq extends Request {
   user: UserClass;
@@ -21,4 +21,12 @@ export type HE_Request_status = {
     };
     compile_status: string;
   };
+};
+
+export type Result = {
+  assignment: AssignmentClass;
+  submissions: {
+    student: UserClass;
+    submissions: SubmissionClass[];
+  }[];
 };

@@ -1,9 +1,8 @@
 import express from "express";
 import { body, query } from "express-validator";
 import { make_submission_and_evaluate } from "../hackerearth";
-import { sleep } from "../lib";
-import { AssignmentModel, EligibilityModel, SubmissionModel, TestCaseModel } from "../models";
-import { AuthorizedReq } from "../types";
+import { AssignmentModel, EligibilityModel, ProblemModel, SubmissionModel, TestCaseModel, UserModel } from "../models";
+import { AuthorizedReq, Result } from "../types";
 import { validate } from "../validate";
 const router = express.Router();
 
@@ -143,5 +142,68 @@ router.post(
     return res.json(assignment);
   }
 );
+
+router.post(
+  "/submit",
+  body("assignment_id").exists(),
+  body("code").exists(),
+  validate,
+  async (req: AuthorizedReq, res) => {
+    const assign = await AssignmentModel.findById(req.body.assignment_id);
+
+    if (!assign) {
+      return res.json({ errors: ["Invalid assignment"] });
+    }
+
+    // const elibility = await EligibilityModel.findOne({
+    //   user_id: req.user.google_id,
+    //   assignment_id: req.body.assignment_id,
+    // });
+    // if (!elibility) {
+    //   return res.json({ errors: ["You are not authorized to submit this assignment"] });
+    // }
+
+    res.json({ submitted: "ok" });
+
+    for (const problem_id of assign.problem_ids) {
+      const problem = await ProblemModel.findById(problem_id);
+
+      for (const testcase_id of problem.testcases) {
+        const testcase = await TestCaseModel.findById(testcase_id);
+        make_submission_and_evaluate({
+          submitter_google_id: req.user.google_id,
+          assignment_id: assign.id,
+          testcase_id: testcase.id,
+          code: req.body.code,
+          input: testcase.input,
+          expected_output: testcase.output,
+        });
+      }
+    }
+  }
+);
+
+router.get("/report", query("assignment_id").exists(), validate, async (req: AuthorizedReq, res) => {
+  const assignment_id = req.body.assignment_id;
+  const assignment = await AssignmentModel.findOne({ assignment_id }).lean();
+
+  const result: Result = {
+    assignment,
+    submissions: [],
+  };
+
+  for (const student_google_id of assignment.student_ids) {
+    const student = await UserModel.findOne({ google_id: student_google_id }).lean();
+    const submissions = await SubmissionModel.find({ submitter_google_id: student_google_id, assignment_id }).lean();
+    const sub = {
+      student,
+      submissions,
+    };
+
+    result.submissions.push(sub);
+  }
+
+  res.json(result);
+});
 
 export default router;
