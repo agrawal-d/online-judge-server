@@ -206,8 +206,8 @@ router.post(
 
     const savedProblem = await problem.save();
 
-    await AssignmentModel.findOneAndUpdate(
-      { id: req.body.assignment_id },
+    await AssignmentModel.findByIdAndUpdate(
+      req.body.assignment_id,
       {
         $push: {
           problem_ids: savedProblem.id,
