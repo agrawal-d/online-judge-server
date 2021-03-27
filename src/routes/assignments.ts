@@ -183,6 +183,74 @@ router.post(
   }
 );
 
+router.post(
+  "/add-problem",
+  body("assignment_id").exists(),
+  body("name").exists(),
+  body("problem_statement").exists(),
+  body("languages_allowed").isArray({ min: 1 }),
+  body("time_limit").exists(),
+  body("memory_limit").exists(),
+  body("testcases").isArray({ min: 1 }),
+  validate,
+  async (req: AuthorizedReq, res) => {
+    const problem = new ProblemModel({
+      assignment_id: req.body.assignment_id,
+      name: req.body.name,
+      time_limit: req.body.time_limit,
+      memory_limit: req.body.memory_limit,
+      problem_statement: req.body.problem_statement,
+      languages_allowed: req.body.languages_allowed,
+      testcases: [],
+    });
+
+    const savedProblem = await problem.save();
+
+    await AssignmentModel.findOneAndUpdate(
+      { id: req.body.assignment_id },
+      {
+        $push: {
+          problem_ids: savedProblem.id,
+        },
+      },
+      undefined,
+      (err, doc) => {
+        if (err) {
+          return res.json({ errors: [err] });
+        }
+        return res.json(doc);
+      }
+    );
+
+    for (let index = 0; index < req.body.testcases.length; index++) {
+      const element = req.body.testcases[index];
+      const testCase = new TestCaseModel({
+        problem_id: savedProblem.id,
+        input: element.input,
+        output: element.output,
+        visible: element.isVisible,
+      });
+      const savedTest = await testCase.save();
+      await ProblemModel.findByIdAndUpdate(
+        { id: savedProblem.id },
+        {
+          $push: {
+            testcases: savedTest.id,
+          },
+        },
+        undefined,
+        (err, doc) => {
+          if (err) {
+            return res.json({ errors: [err] });
+          }
+          return res.json(doc);
+        }
+      );
+    }
+    return res.json(savedProblem);
+  }
+);
+
 router.get("/report", query("assignment_id").exists(), validate, async (req: AuthorizedReq, res) => {
   const assignment_id = req.body.assignment_id;
   const assignment = await AssignmentModel.findOne({ assignment_id }).lean();
