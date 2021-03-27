@@ -213,13 +213,7 @@ router.post(
           problem_ids: savedProblem.id,
         },
       },
-      undefined,
-      (err, doc) => {
-        if (err) {
-          return res.json({ errors: [err] });
-        }
-        return res.json(doc);
-      }
+      undefined
     );
 
     for (let index = 0; index < req.body.testcases.length; index++) {
@@ -232,22 +226,17 @@ router.post(
       });
       const savedTest = await testCase.save();
       await ProblemModel.findByIdAndUpdate(
-        { id: savedProblem.id },
+        savedProblem.id,
         {
           $push: {
             testcases: savedTest.id,
           },
         },
-        undefined,
-        (err, doc) => {
-          if (err) {
-            return res.json({ errors: [err] });
-          }
-          return res.json(doc);
-        }
+        undefined
       );
     }
-    return res.json(savedProblem);
+
+    return res.end("OK");
   }
 );
 
