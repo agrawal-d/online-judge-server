@@ -90,7 +90,10 @@ export async function evaluate_submission(he_id: string, expected_output: string
   }
 
   sub.evaluated = true;
-  sub.stdout = (await axios.get(data.result.run_status.output)).data.trim();
+  // console.warn(data.result.run_status.output);
+  const output_text_res = await axios.get(data.result.run_status.output);
+  // console.warn(output_text_res);
+  sub.stdout = output_text_res.data.toString().trim();
   const pass = sub.stdout.trim() === expected_output.trim();
   sub.verdict = pass ? "PASS" : "FAIL";
   sub.time_used = data.result.run_status.time_used;
