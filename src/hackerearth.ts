@@ -70,6 +70,7 @@ export async function make_submission_and_evaluate(p: {
     evaluated: false,
     language: "C",
   });
+  console.log(sub);
   sub.save();
   await sleep(6000);
   const evaluated_sub = await evaluate_submission(body.he_id, p.expected_output);

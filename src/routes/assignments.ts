@@ -131,8 +131,9 @@ router.post(
     // }
 
     res.json({ submitted: "ok" });
-
+    let pidx = -1;
     for (const problem_id of assign.problem_ids) {
+      pidx++;
       const problem = await ProblemModel.findById(problem_id);
 
       for (const testcase_id of problem.testcases) {
@@ -141,7 +142,7 @@ router.post(
           submitter_google_id: req.user.google_id,
           assignment_id: assign.id,
           testcase_id: testcase.id,
-          code: req.body.code,
+          code: req.body.code[pidx],
           input: testcase.input,
           expected_output: testcase.output,
         });
@@ -189,8 +190,9 @@ router.post(
         problem_id: savedProblem.id,
         input: element.input,
         output: element.output,
-        visible: element.isVisible,
+        visible: element.visible,
       });
+      console.log(element.visible);
       const savedTest = await testCase.save();
       await ProblemModel.findByIdAndUpdate(
         savedProblem.id,
