@@ -59,6 +59,8 @@ export async function make_submission_and_evaluate(p: {
   const data = res.data;
   const body: { he_id: string; status_update_url: string } = data;
 
+  console.warn(p.assignment_id);
+
   const sub = new SubmissionModel({
     he_id: body.he_id,
     status_update_url: body.status_update_url,

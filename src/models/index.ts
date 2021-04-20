@@ -125,13 +125,13 @@ export class AssignmentClass {
   name: string;
 
   @prop()
-  prof_id: string;
+  prof_id: string; // google id
 
   @prop()
-  ta_ids: string[];
+  ta_ids: string[]; // emails
 
   @prop()
-  student_ids: string[];
+  student_ids: string[]; // emails
 
   @prop()
   start: Date;

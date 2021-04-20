@@ -53,10 +53,9 @@ router.post(
     // }
 
     const testcase = await TestCaseModel.findById(req.body.testcase_id);
-
     const sub = await make_submission_and_evaluate({
       submitter_google_id: user_id,
-      assignment_id: req.body.assigment_id,
+      assignment_id: req.body.assignment_id,
       testcase_id: req.body.testcase_id,
       code: req.body.code,
       input: testcase.input,
@@ -210,17 +209,21 @@ router.post(
 );
 
 router.get("/report", query("assignment_id").exists(), validate, async (req: AuthorizedReq, res) => {
-  const assignment_id = req.body.assignment_id;
-  const assignment = await AssignmentModel.findOne({ assignment_id }).lean();
+  const assignment_id = req.query.assignment_id as string;
+  const assignment = await AssignmentModel.findById(assignment_id).lean();
+  console.log(assignment_id, assignment);
 
   const result: Result = {
     assignment,
     submissions: [],
   };
 
-  for (const student_google_id of assignment.student_ids) {
-    const student = await UserModel.findOne({ google_id: student_google_id }).lean();
-    const submissions = await SubmissionModel.find({ submitter_google_id: student_google_id, assignment_id }).lean();
+  for (const student_email of assignment.student_ids) {
+    const student = await UserModel.findOne({ email: student_email }).lean();
+    if (!student) {
+      continue;
+    }
+    const submissions = await SubmissionModel.find({ submitter_google_id: student.google_id, assignment_id }).lean();
     const sub = {
       student,
       submissions,
